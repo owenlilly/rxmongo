@@ -12,7 +12,7 @@
     "mongo"
   ],
   "author": "Owen Lilly",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "dependencies": {
     "mongodb": "^2.2.4",
     "rx": "^4.1.0"
