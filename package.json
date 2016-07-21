@@ -9,11 +9,7 @@
   "engines": {
     "node": ">=6.3.0"
   },
-  "keywords": [
-    "rx",
-    "mongodb",
-    "mongo"
-  ],
+  "keywords": [],
   "author": "Owen Lilly",
   "license": "Apache 2.0",
   "dependencies": {
