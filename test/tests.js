@@ -39,17 +39,16 @@ describe('RxMongo', function() {
     });
 
     describe('.aggregate(collection, aggregationPipeline)', function(){
-        it('should documents based on aggregationPipeline', function(done){
+        it('should return documents based on aggregationPipeline', function(done){
             const aggregations = [
-                {$unwind: '$categories'}, 
+                {$unwind: '$categories'},
                 {$group: {_id: '$categories', count: {$sum: 1}}}, 
                 {$project: {name: '$_id', _id: 0, count: 1}}
             ];
-
+            
             RxMongo.collection(collectionName)
                     .flatMap(coll => RxMongo.aggregate(coll, aggregations))
                     .subscribe(result => {
-                        console.log(result);
                         expect(result.length === 6).to.be.true;
                     }, err => console.log(`Error: ${err}`), () => done());
         });
