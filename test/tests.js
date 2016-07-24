@@ -3,12 +3,10 @@
 const chai = require('chai'),
     expect = chai.expect,
     should = chai.should(),
-    Rx = require('rx'),
     RxMongo = require('./../lib/RxMongo.js');
 
 const collectionName = 'RadioStations';
 
-var assert = require('chai').assert;
 describe('RxMongo', function() {
     before(function(done){
         RxMongo.connect('mongodb://localhost/rxmongo_test').subscribe(db => {
@@ -37,6 +35,23 @@ describe('RxMongo', function() {
                             expect(count === 8).to.be.true;
                         }, err => console.log(`Err: ${err}`), () => done());
             });
+        });
+    });
+
+    describe('.aggregate(collection, aggregationPipeline)', function(){
+        it('should documents based on aggregationPipeline', function(done){
+            const aggregations = [
+                {$unwind: '$categories'}, 
+                {$group: {_id: '$categories', count: {$sum: 1}}}, 
+                {$project: {name: '$_id', _id: 0, count: 1}}
+            ];
+
+            RxMongo.collection(collectionName)
+                    .flatMap(coll => RxMongo.aggregate(coll, aggregations))
+                    .subscribe(result => {
+                        console.log(result);
+                        expect(result.length === 6).to.be.true;
+                    }, err => console.log(`Error: ${err}`), () => done());
         });
     });
 });
