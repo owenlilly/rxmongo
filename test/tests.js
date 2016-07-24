@@ -26,5 +26,17 @@ describe('RxMongo', function() {
                         }, err => console.log(`Err: ${err}`), () => done());
             });
         });
+
+        describe('.count(collection, query)', function(done){
+            it('should count of all documents in collection matching the given query', function(done){
+                const query = { categories: { $in: [new RegExp('music', 'i')] } };
+
+                RxMongo.collection(collectionName)
+                        .flatMap(coll => RxMongo.count(coll, query))
+                        .subscribe(count => {
+                            expect(count === 8).to.be.true;
+                        }, err => console.log(`Err: ${err}`), () => done());
+            });
+        });
     });
 });
