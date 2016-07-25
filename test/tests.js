@@ -49,7 +49,7 @@ describe('RxMongo', function() {
             RxMongo.collection(collectionName)
                     .flatMap(coll => RxMongo.aggregate(coll, aggregations))
                     .subscribe(result => {
-                        expect(result.length === 6).to.be.true;
+                        expect(result.length === 5).to.be.true;
                     }, err => console.log(`Error: ${err}`), () => done());
         });
     });
