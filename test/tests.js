@@ -6,6 +6,7 @@ const chai = require('chai'),
     RxMongo = require('./../lib/RxMongo.js');
 
 const collectionName = 'RadioStations';
+const collectionInsert = 'InsertCollection';
 
 describe('RxMongo', function() {
     before(function(done){
@@ -51,6 +52,39 @@ describe('RxMongo', function() {
                     .subscribe(result => {
                         expect(result.length === 5).to.be.true;
                     }, err => console.log(`Error: ${err}`), () => done());
+        });
+    });
+
+    describe('.insert(collection, docs)', function(){
+        it('should insert single json document in provided collection', function(done){
+            const doc = {
+                name: 'single',
+                items: ['one', 'two', 'three']
+            };
+
+            RxMongo.collection(collectionInsert)
+                    .flatMap(coll => RxMongo.insert(coll, doc))
+                    .subscribe(result => {
+                        expect(result.insertedCount).to.equal(1);
+                    }, err => console.log(`Error: ${err}`)
+                    , () => done());
+        });
+
+        it('should insert an array of json documents in provided collection', function(done){
+            const docs = [{
+                name: 'array',
+                items: ['arr1', 'arr2', 'arr3']
+            }, {
+                name: 'array',
+                items: ['arr1', 'arr2', 'arr3']
+            }];
+
+            RxMongo.collection(collectionInsert)
+                    .flatMap(coll => RxMongo.insert(coll, docs))
+                    .subscribe(result => {
+                        expect(result.insertedCount).to.equal(2);
+                    }, err => console.log(`Error: ${err}`)
+                    , () => done());
         });
     });
 });
