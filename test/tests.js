@@ -87,4 +87,16 @@ describe('RxMongo', function() {
                     , () => done());
         });
     });
+
+    describe('.updateOne(collection, filter, update)', function(){
+        it('should update a single document based on filter condition', function(done){
+
+            RxMongo.collection(collectionInsert)
+                    .flatMap(coll => RxMongo.updateOne(coll, {name: 'array'}, {$set: {name: 'arrayUpdated'}}))
+                    .subscribe(updates => {
+                        expect(updates.result.ok).to.equal(1);
+                    }, err => console.log(`Error: ${err}`)
+                    , () => done());
+        });
+    });
 });
