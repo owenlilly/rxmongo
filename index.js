@@ -1,1 +1,5 @@
-module.exports = require('./lib/RxMongo.js');
+module.exports = {
+    RxMongo: require('./lib/RxMongo.js'),
+    RxCursor: require('./lib/RxCursor.js'),
+    RxCollection: require('./lib/RxCollection.js')
+};
