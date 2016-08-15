@@ -3,7 +3,8 @@
 const chai = require('chai'),
     expect = chai.expect,
     should = chai.should(),
-    RxMongo = require('./../lib/RxMongo.js');
+    RxMongo = require('./../lib/RxMongo'),
+    RxCollection = require('./../lib/RxCollection');
 
 const collectionName = 'RadioStations';
 const collectionInsert = 'InsertCollection';
@@ -97,6 +98,37 @@ describe('RxMongo', function() {
                         expect(updates.result.ok).to.equal(1);
                     }, err => console.log(`Error: ${err}`)
                     , () => done());
+        });
+    });
+
+    describe('RxCollection', function(){
+        describe('.find(query)', function(){
+            it('should find documents based on query', function(done){
+                new RxCollection(collectionName)
+                            .find({})
+                            .first()
+                            .subscribe(docs => {
+                                expect(docs).to.exist;
+                                expect(docs).to.not.be.instanceOf(Array);
+                            }, err => {
+                                expect(err).to.not.exist;
+                            }, 
+                            () => done());
+            });
+        });
+
+        describe('.count(query)', function(){
+            it('should count number of documents in collection', function(done){
+                new RxCollection(collectionName)
+                            .count({})
+                            .subscribe(count => {
+                                expect(count).to.exist;
+                                expect(count).to.equal(16);
+                            }, err => {
+                                expect(err).to.not.exist;
+                            }, 
+                            () => done());
+            })
         });
     });
 });
