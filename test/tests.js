@@ -107,9 +107,9 @@ describe('RxMongo', function() {
                 new RxCollection(collectionName)
                             .find({})
                             .first()
-                            .subscribe(docs => {
-                                expect(docs).to.exist;
-                                expect(docs).to.not.be.instanceOf(Array);
+                            .subscribe(doc => {
+                                expect(doc).to.exist;
+                                expect(doc).to.not.be.instanceOf(Array);
                             }, err => {
                                 expect(err).to.not.exist;
                             }, 
