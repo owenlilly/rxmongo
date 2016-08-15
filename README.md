@@ -12,8 +12,10 @@ npm install rxmongo
 Basic Usage
 ----
 
-**_Connect_**
 You must first connect before using any of the features of the library. Only one call to connect is necessary as each call will open a new connection.
+
+
+**_Connect_**
 
 ```javascript
 const RxMongo = require('rxmongo').RxMongo
