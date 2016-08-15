@@ -62,7 +62,7 @@ You have the full power and flexibility of RxJS, see [reactivex.io](http://react
 const RxCollection = require('rxmongo').RxCollection;
 const rxCollection = new RxCollection('mycollection');
 
-conss rxFind = rxCollection.find({foo: 'bar'});
+const rxFind = rxCollection.find({foo: 'bar'});
 const findOne = rxFind.first();
 const findAll = rxFind.toArray();
 const findAllSorted = rxFind.sort({date: -1}).toArray();
