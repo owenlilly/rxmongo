@@ -96,8 +96,9 @@ describe('RxMongo', function() {
                     .flatMap(coll => RxMongo.updateOne(coll, {name: 'array'}, {$set: {name: 'arrayUpdated'}}))
                     .subscribe(updates => {
                         expect(updates.result.ok).to.equal(1);
-                    }, err => console.log(`Error: ${err}`)
-                    , () => done());
+                    }, 
+                    err => console.log(`Error: ${err}`),
+                    () => done());
         });
     });
 
@@ -129,6 +130,25 @@ describe('RxMongo', function() {
                             }, 
                             () => done());
             })
+        });
+
+        describe('.aggregate(aggregationPipeline).toArray()', function(){
+            it('should return documents based on aggregationPipeline', function(done){
+                const aggregations = [
+                    {$unwind: '$categories'},
+                    {$group: {_id: '$categories', count: {$sum: 1}}}, 
+                    {$project: {name: '$_id', _id: 0, count: 1}}
+                ];
+                
+                new RxCollection(collectionName)
+                        .aggregate(aggregations)
+                        .toArray()
+                        .subscribe(result => {
+                            expect(result.length === 5).to.be.true;
+                        }, 
+                        err => console.log(`Error: ${err}`), 
+                        () => done());
+            });
         });
     });
 });
