@@ -132,6 +132,25 @@ describe('RxMongo', function() {
             })
         });
 
+        describe('.insert(doc)', function(){
+            it('should insert a single document into collection', function(done){
+                const doc = {
+                    name: 'single',
+                    items: ['one', 'two', 'three']
+                };
+
+                new RxCollection(collectionInsert)
+                            .insert(doc)
+                            .subscribe(result => {
+                                expect(result).to.exist;
+                                expect(result.result.ok).to.equal(1);
+                                expect(result.insertedCount).to.equal(1);
+                            }, err => {
+                                expect(err).to.not.exist;
+                            }, () => done());
+            })
+        });
+
         describe('.aggregate(aggregationPipeline).toArray()', function(){
             it('should return documents based on aggregationPipeline', function(done){
                 const aggregations = [
