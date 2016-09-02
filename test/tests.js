@@ -169,5 +169,39 @@ describe('RxMongo', function() {
                         () => done());
             });
         });
+
+        describe('.updateOne(filter, update)', function(){
+            it('should update the given properties, based on the doc found by filter', function(done){
+                const filter = {
+                    name: 'single'
+                };
+
+                const collection = new RxCollection(collectionInsert);
+                collection.updateOne(filter, {name: 'updated!'})
+                          .subscribe(result => {
+                              expect(result).to.exist;
+                              expect(result.result.ok).to.equal(1);
+                          }, 
+                          err => console.log(`Error: ${err}`),
+                          () => done());
+            });
+        });
+
+        describe('.deleteOne(filter)', function(){
+            it('should delete a single document, based on the filter', function(done){
+                const filter = {
+                    name: 'single'
+                };
+
+                const collection = new RxCollection(collectionInsert);
+                collection.deleteOne(filter)
+                            .subscribe(result => {
+                                expect(result).to.exist;
+                                expect(result.result.ok).to.equal(1);
+                            }, err => {
+                                console.log(`Error: ${err}`);
+                            }, () => done());
+            });
+        });
     });
 });
