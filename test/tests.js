@@ -104,17 +104,34 @@ describe('RxMongo', function() {
 
     describe('RxCollection', function(){
         describe('.find(query)', function(){
-            it('should find documents based on query', function(done){
-                new RxCollection(collectionName)
-                            .find({})
-                            .first()
-                            .subscribe(doc => {
-                                expect(doc).to.exist;
-                                expect(doc).to.not.be.instanceOf(Array);
-                            }, err => {
-                                expect(err).to.not.exist;
-                            }, 
-                            () => done());
+            describe('.first()', function(){
+                it('should find the first document based on query', function(done){
+                    new RxCollection(collectionName)
+                                .find({})
+                                .first()
+                                .subscribe(doc => {
+                                    expect(doc).to.exist;
+                                    expect(doc).to.not.be.instanceOf(Array);
+                                }, err => {
+                                    expect(err).to.not.exist;
+                                }, 
+                                () => done());
+                });
+            });
+
+            describe('.toArray()', function(){
+                it('should find the first document based on query', function(done){
+                    new RxCollection(collectionName)
+                                .find({})
+                                .toArray()
+                                .subscribe(docs => {
+                                    expect(docs).to.exist;
+                                    expect(docs).to.be.instanceOf(Array);
+                                }, err => {
+                                    expect(err).to.not.exist;
+                                }, 
+                                () => done());
+                });
             });
         });
 
@@ -151,22 +168,43 @@ describe('RxMongo', function() {
             })
         });
 
-        describe('.aggregate(aggregationPipeline).toArray()', function(){
-            it('should return documents based on aggregationPipeline', function(done){
-                const aggregations = [
-                    {$unwind: '$categories'},
-                    {$group: {_id: '$categories', count: {$sum: 1}}}, 
-                    {$project: {name: '$_id', _id: 0, count: 1}}
-                ];
-                
-                new RxCollection(collectionName)
-                        .aggregate(aggregations)
-                        .toArray()
-                        .subscribe(result => {
-                            expect(result.length === 5).to.be.true;
-                        }, 
-                        err => console.log(`Error: ${err}`), 
-                        () => done());
+        describe('.aggregate(aggregationPipeline)', function(){
+            describe('.toArray()', function(){
+                it('should return documents based on aggregationPipeline', function(done){
+                    const aggregations = [
+                        {$unwind: '$categories'},
+                        {$group: {_id: '$categories', count: {$sum: 1}}}, 
+                        {$project: {name: '$_id', _id: 0, count: 1}}
+                    ];
+                    
+                    new RxCollection(collectionName)
+                            .aggregate(aggregations)
+                            .toArray()
+                            .subscribe(result => {
+                                expect(result.length === 5).to.be.true;
+                            }, 
+                            err => console.log(`Error: ${err}`), 
+                            () => done());
+                });
+            });
+
+            describe('.first()', function(){
+                it('should return the first/single document based on aggregationPipeline', function(done){
+                    const aggregations = [
+                        {$unwind: '$categories'},
+                        {$group: {_id: '$categories', count: {$sum: 1}}}, 
+                        {$project: {name: '$_id', _id: 0, count: 1}}
+                    ];
+                    
+                    new RxCollection(collectionName)
+                            .aggregate(aggregations)
+                            .first()
+                            .subscribe(result => {
+                                expect(result).to.not.be.instanceOf(Array);
+                            }, 
+                            err => console.log(`Error: ${err}`), 
+                            () => done());
+                });
             });
         });
 
