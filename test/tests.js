@@ -135,6 +135,20 @@ describe('RxMongo', function() {
             });
         });
 
+        describe('.exists(query)', function(){
+            it('should return true if document is found based on query, returns false otherwise', function(done){
+                new RxCollection(collectionInsert)
+                            .exists({name: 'single'})
+                            .subscribe(found => {
+                                expect(found).to.exist;
+                                expect(found).to.be.true;
+                            }, err => {
+                                expect(err).to.not.exist;
+                            }, 
+                            () => done());
+            })
+        });
+
         describe('.count(query)', function(){
             it('should count number of documents in collection', function(done){
                 new RxCollection(collectionName)
