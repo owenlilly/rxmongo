@@ -6,20 +6,26 @@ const chai = require('chai'),
     RxMongo = require('./../lib/RxMongo'),
     RxCollection = require('./../lib/RxCollection');
 
-const collectionName = 'RadioStations';
-const collectionInsert = 'InsertCollection';
+const testCollection = 'TestCollection';
 
 describe('RxMongo', function() {
     before(function(done){
         RxMongo.connect('mongodb://localhost/rxmongo_test').subscribe(db => {
-            // database connected
-        }, err => console.log(`Err: ${err}`), () => done());
+            seedData(new RxCollection(testCollection), done);
+        }, err => {
+            console.log(`Err: ${err}`);
+            done();
+        });
+    });
+
+    after(function(done){
+        cleanData(new RxCollection(testCollection), done);
     });
 
     describe('.count(collection, query, options)', function(){
         describe('.count(collection)', function(done){
             it('should count of all documents in collection', function(done){
-                RxMongo.collection(collectionName)
+                RxMongo.collection(testCollection)
                         .flatMap(coll => RxMongo.count(coll))
                         .subscribe(count => {
                             expect(count > 1).to.be.true;
@@ -29,12 +35,12 @@ describe('RxMongo', function() {
 
         describe('.count(collection, query)', function(done){
             it('should count of all documents in collection matching the given query', function(done){
-                const query = { categories: { $in: [new RegExp('music', 'i')] } };
+                const query = { categories: { $in: [new RegExp('One', 'i')] } };
 
-                RxMongo.collection(collectionName)
+                RxMongo.collection(testCollection)
                         .flatMap(coll => RxMongo.count(coll, query))
                         .subscribe(count => {
-                            expect(count === 8).to.be.true;
+                            expect(count === 3).to.be.true;
                         }, err => console.log(`Err: ${err}`), () => done());
             });
         });
@@ -48,7 +54,7 @@ describe('RxMongo', function() {
                 {$project: {name: '$_id', _id: 0, count: 1}}
             ];
             
-            RxMongo.collection(collectionName)
+            RxMongo.collection(testCollection)
                     .flatMap(coll => RxMongo.aggregate(coll, aggregations))
                     .subscribe(result => {
                         expect(result.length === 5).to.be.true;
@@ -59,11 +65,11 @@ describe('RxMongo', function() {
     describe('.insert(collection, docs)', function(){
         it('should insert single json document in provided collection', function(done){
             const doc = {
-                name: 'single',
-                items: ['one', 'two', 'three']
+                name: 'SingleInsert',
+                items: ['One', 'Two', 'Three']
             };
 
-            RxMongo.collection(collectionInsert)
+            RxMongo.collection(testCollection)
                     .flatMap(coll => RxMongo.insert(coll, doc))
                     .subscribe(result => {
                         expect(result.insertedCount).to.equal(1);
@@ -73,14 +79,14 @@ describe('RxMongo', function() {
 
         it('should insert an array of json documents in provided collection', function(done){
             const docs = [{
-                name: 'array',
+                name: 'ArrayInsert',
                 items: ['arr1', 'arr2', 'arr3']
             }, {
-                name: 'array',
+                name: 'ArrayInsert',
                 items: ['arr1', 'arr2', 'arr3']
             }];
 
-            RxMongo.collection(collectionInsert)
+            RxMongo.collection(testCollection)
                     .flatMap(coll => RxMongo.insert(coll, docs))
                     .subscribe(result => {
                         expect(result.insertedCount).to.equal(2);
@@ -92,7 +98,7 @@ describe('RxMongo', function() {
     describe('.updateOne(collection, filter, update)', function(){
         it('should update a single document based on filter condition', function(done){
 
-            RxMongo.collection(collectionInsert)
+            RxMongo.collection(testCollection)
                     .flatMap(coll => RxMongo.updateOne(coll, {name: 'array'}, {$set: {name: 'arrayUpdated'}}))
                     .subscribe(updates => {
                         expect(updates.result.ok).to.equal(1);
@@ -106,7 +112,7 @@ describe('RxMongo', function() {
         describe('.find(query)', function(){
             describe('.first()', function(){
                 it('should find the first document based on query', function(done){
-                    new RxCollection(collectionName)
+                    new RxCollection(testCollection)
                                 .find({})
                                 .first()
                                 .subscribe(doc => {
@@ -121,7 +127,7 @@ describe('RxMongo', function() {
 
             describe('.toArray()', function(){
                 it('should find the first document based on query', function(done){
-                    new RxCollection(collectionName)
+                    new RxCollection(testCollection)
                                 .find({})
                                 .toArray()
                                 .subscribe(docs => {
@@ -137,25 +143,25 @@ describe('RxMongo', function() {
 
         describe('.exists(query)', function(){
             it('should return true if document is found based on query, returns false otherwise', function(done){
-                new RxCollection(collectionInsert)
-                            .exists({name: 'single'})
+                new RxCollection(testCollection)
+                            .exists({name: 'SingleInsert'})
                             .subscribe(found => {
                                 expect(found).to.exist;
                                 expect(found).to.be.true;
                             }, err => {
                                 expect(err).to.not.exist;
-                            }, 
+                            },
                             () => done());
             })
         });
 
         describe('.count(query)', function(){
             it('should count number of documents in collection', function(done){
-                new RxCollection(collectionName)
+                new RxCollection(testCollection)
                             .count({})
                             .subscribe(count => {
                                 expect(count).to.exist;
-                                expect(count).to.equal(16);
+                                expect(count).to.equal(9);
                             }, err => {
                                 expect(err).to.not.exist;
                             }, 
@@ -170,7 +176,7 @@ describe('RxMongo', function() {
                     items: ['one', 'two', 'three']
                 };
 
-                new RxCollection(collectionInsert)
+                new RxCollection(testCollection)
                             .insert(doc)
                             .subscribe(result => {
                                 expect(result).to.exist;
@@ -191,7 +197,7 @@ describe('RxMongo', function() {
                         {$project: {name: '$_id', _id: 0, count: 1}}
                     ];
                     
-                    new RxCollection(collectionName)
+                    new RxCollection(testCollection)
                             .aggregate(aggregations)
                             .toArray()
                             .subscribe(result => {
@@ -210,7 +216,7 @@ describe('RxMongo', function() {
                         {$project: {name: '$_id', _id: 0, count: 1}}
                     ];
                     
-                    new RxCollection(collectionName)
+                    new RxCollection(testCollection)
                             .aggregate(aggregations)
                             .first()
                             .subscribe(result => {
@@ -228,7 +234,7 @@ describe('RxMongo', function() {
                     name: 'single'
                 };
 
-                const collection = new RxCollection(collectionInsert);
+                const collection = new RxCollection(testCollection);
                 collection.updateOne(filter, {name: 'updated!'})
                           .subscribe(result => {
                               expect(result).to.exist;
@@ -245,7 +251,7 @@ describe('RxMongo', function() {
                     name: 'single'
                 };
 
-                const collection = new RxCollection(collectionInsert);
+                const collection = new RxCollection(testCollection);
                 collection.deleteOne(filter)
                             .subscribe(result => {
                                 expect(result).to.exist;
@@ -257,3 +263,34 @@ describe('RxMongo', function() {
         });
     });
 });
+
+var seedData = function(rxCollection, done){
+    const cat1 = 'One';
+    const cat2 = 'Two';
+    const cat3 = 'Three';
+    const cat4 = 'Four';
+    const cat5 = 'Five';
+
+    const doc1 = {name: 'First', categories: [cat1, cat3]};
+    const doc2 = {name: 'Second', categories: [cat5, cat3]};
+    const doc3 = {name: 'Third', categories: [cat1, cat5]};
+    const doc4 = {name: 'Fourth', categories: [cat2, cat1]};
+    const doc5 = {name: 'Fifth', categories: [cat3, cat4]};
+    const doc6 = {name: 'Sixth', categories: [cat5, cat4]};
+
+    rxCollection.insertMany([doc1, doc2, doc3, doc4, doc5, doc6])
+                .subscribe(result => {
+                    console.log('Seeded.');
+                }, error => {
+                    console.log(error);
+                }, () => done());
+}
+
+var cleanData = function(rxCollection, done){
+    rxCollection.deleteMany({})
+                .subscribe(result => {
+                    console.log('Cleaned up.');
+                }, error => {
+                    console.log(error);
+                }, () => done());
+}
