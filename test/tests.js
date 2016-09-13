@@ -249,7 +249,7 @@ describe('RxMongo', function() {
 
             describe('.findById(id)', function(){
                 it('should return a single doc based on the given id', function(done){
-                    console.log(id);
+
                     const collection = new RxCollection(testCollection);
                     collection.findById(id)
                                 .subscribe(doc => {
