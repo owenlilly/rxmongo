@@ -228,6 +228,40 @@ describe('RxMongo', function() {
             });
         });
 
+        describe('.findOne(filter)', function(){
+            let id = undefined;
+
+            it('should return a single document based on the given query', function(done){
+                const filter = {
+                    name: 'single'
+                }
+
+                const collection = new RxCollection(testCollection);
+                collection.findOne(filter)
+                            .subscribe(doc => {
+                                expect(doc).to.exist;
+                                expect(doc).to.not.be.instanceOf(Array);
+                                id = doc._id;
+                            }, error => {
+                                console.log(error);
+                            }, () => done());
+            });
+
+            describe('.findById(id)', function(){
+                it('should return a single doc based on the given id', function(done){
+                    console.log(id);
+                    const collection = new RxCollection(testCollection);
+                    collection.findById(id)
+                                .subscribe(doc => {
+                                    expect(doc).to.exit;
+                                    expect(doc).to.not.be.instanceOf(Array);
+                                }, error => {
+                                    console.log(error);
+                                }, () => done());
+                }); 
+            });
+        });
+
         describe('.updateOne(filter, update)', function(){
             it('should update the given properties, based on the doc found by filter', function(done){
                 const filter = {
