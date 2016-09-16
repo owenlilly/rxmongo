@@ -1,6 +1,6 @@
 {
   "name": "rxmongo",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "description": "A simple wrapper around native MongoClient that uses the RxJS  ",
   "main": "index.js",
   "scripts": {
