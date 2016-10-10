@@ -1,8 +1,7 @@
-[![Build Status](https://travis-ci.org/owenlilly/rxmongo.svg?branch=master)](https://travis-ci.org/owenlilly/rxmongo)
-
 # rxmongo
 A simple wrapper around native mongo driver that uses [RxJS](https://github.com/Reactive-Extensions/RxJS).
 
+[![Build Status](https://travis-ci.org/owenlilly/rxmongo.svg?branch=master)](https://travis-ci.org/owenlilly/rxmongo)
 
 Installation
 ----
