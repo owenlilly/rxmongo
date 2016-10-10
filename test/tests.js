@@ -7,10 +7,11 @@ const chai = require('chai'),
     RxCollection = require('./../lib/RxCollection');
 
 const testCollection = 'TestCollection';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://localhost/rxmongo_test';
 
 describe('RxMongo', function() {
     before(function(done){
-        RxMongo.connect('mongodb://localhost/rxmongo_test').subscribe(db => {
+        RxMongo.connect(mongoUrl).subscribe(db => {
             seedData(new RxCollection(testCollection), done);
         }, err => {
             console.log(`Err: ${err}`);
