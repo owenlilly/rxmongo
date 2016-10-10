@@ -4,7 +4,7 @@
   "description": "A simple wrapper around native MongoClient that uses the RxJS  ",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*.js test/**/*.js"
   },
   "engines": {
     "node": ">=6.3.0"
