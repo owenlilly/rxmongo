@@ -140,6 +140,21 @@ describe('RxMongo', function() {
                                 () => done());
                 });
             });
+
+            describe('.whileHasNext()', function(){
+                it('should return documents one at a time until none are left', function(done){
+                    new RxCollection(testCollection)
+                                .find({})
+                                .whileHasNext()
+                                .subscribe(doc => {
+                                    expect(doc).to.exist;
+                                    expect(doc).to.not.be.null;
+                                }, err => {
+                                    expect(err).to.not.exist;
+                                },
+                                () => done());
+                });
+            });
         });
 
         describe('.exists(query)', function(){
